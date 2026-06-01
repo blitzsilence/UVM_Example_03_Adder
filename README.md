@@ -1,11 +1,11 @@
 # UVM_Example_Adder
 
-#### Intro
+## Intro
 
 UVM testbench environment practice for a simple adder DUT
 
 
-#### Verification Environment
+## Verification Environment
 ```
     Project_root
     │
