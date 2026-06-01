@@ -4,6 +4,7 @@
 
 UVM testbench environment practice for a simple adder DUT
 
+Testcase: random_data_delay_test, burst_data_test, order_data_test
 
 ## Verification Environment
 ```
@@ -18,17 +19,16 @@ UVM testbench environment practice for a simple adder DUT
     │   └── dut.sv
     │
     ├── sim
-    │   ├── Makefile
-    │   └── runlist
+    │   └── Makefile
     │ 
     └── tb
         ├── env
         │   ├── agent.sv
+        │   ├── driver.sv        
         │   ├── env.sv
         │   ├── monitor.sv
         │   ├── ref_model.sv
         │   ├── scoreboard.sv
-        │   ├── sequencer.sv
         │   ├── sequencer.sv
         │   └── transaction.sv
         │ 
@@ -37,82 +37,80 @@ UVM testbench environment practice for a simple adder DUT
         │
         ├── package
         │   └── env_pkg.sv
-        │ 
+        │
+        ├── sequence
+        │   ├── base_sequence.sv
+        │   └── sequence_lib.sv
+        │
         ├── testcase
         │   ├── base_test.sv
-        │   ├── my_case1.sv
-        │   └── my_case1.sv
+        │   └── test_lib.sv
         │        
         └── top
-            ├── tb_top.sv
             ├── rtl.f
-            └── tb.f
+            ├── tb.f
+            └── tb_top.sv
 ```
 
-#### Makefile excution
+## Makefile excution
 make comp 
 
-make all TESTNAME=basetest
+make sim TESTNAME=basetest
 
-make sim TESTNAME=my_case0
+make sim TESTNAME=random_data_delay_test
 
-make sim TESTNAME=my_case1
+make sim TESTNAME=burst_data_test
+
+make sim TESTNAME=order_data_test
 
 
-#### UVM testbench topology
+## UVM testbench topology
 ```
 ------------------------------------------------------------------
 Name                       Type                        Size  Value
 ------------------------------------------------------------------
 uvm_test_top               base_test                   -     @465 
   env                      my_env                      -     @473 
-    i_agt                  agent_in                    -     @604 
-      drv                  my_driver                   -     @922 
-        rsp_port           uvm_analysis_port           -     @939 
-        seq_item_port      uvm_seq_item_pull_port      -     @930 
-      mon                  monitor_in                  -     @948 
-        ap                 uvm_analysis_port           -     @958 
-      sqr                  my_sequencer                -     @799 
-        rsp_export         uvm_analysis_export         -     @807 
-        seq_item_export    uvm_seq_item_pull_imp       -     @913 
+    i_agt                  agent_in                    -     @481 
+      drv                  my_driver                   -     @799 
+        rsp_port           uvm_analysis_port           -     @816 
+        seq_item_port      uvm_seq_item_pull_port      -     @807 
+      mon                  monitor_in                  -     @825 
+        ap                 uvm_analysis_port           -     @835 
+      sqr                  my_sequencer                -     @676 
+        rsp_export         uvm_analysis_export         -     @684 
+        seq_item_export    uvm_seq_item_pull_imp       -     @790 
         arbitration_queue  array                       0     -    
         lock_queue         array                       0     -    
         num_last_reqs      integral                    32    'd1  
         num_last_rsps      integral                    32    'd1  
-    i_agt_mdl_fifo         uvm_tlm_analysis_fifo #(T)  -     @636 
-      analysis_export      uvm_analysis_imp            -     @680 
-      get_ap               uvm_analysis_port           -     @671 
-      get_peek_export      uvm_get_peek_imp            -     @653 
-      put_ap               uvm_analysis_port           -     @662 
-      put_export           uvm_put_imp                 -     @644 
-    mdl                    my_model                    -     @620 
-      ap                   uvm_analysis_port           -     @976 
-      port                 uvm_blocking_get_port       -     @967 
-    mdl_scb_fifo           uvm_tlm_analysis_fifo #(T)  -     @689 
-      analysis_export      uvm_analysis_imp            -     @733 
-      get_ap               uvm_analysis_port           -     @724 
-      get_peek_export      uvm_get_peek_imp            -     @706 
-      put_ap               uvm_analysis_port           -     @715 
-      put_export           uvm_put_imp                 -     @697 
-    o_agt                  agent_out                   -     @612 
-      mon                  monitor_out                 -     @989 
-        ap                 uvm_analysis_port           -     @998 
-    o_agt_scb_fifo         uvm_tlm_analysis_fifo #(T)  -     @742 
-      analysis_export      uvm_analysis_imp            -     @786 
-      get_ap               uvm_analysis_port           -     @777 
-      get_peek_export      uvm_get_peek_imp            -     @759 
-      put_ap               uvm_analysis_port           -     @768 
-      put_export           uvm_put_imp                 -     @750 
-    scb                    my_scoreboard               -     @628 
-      act_port             uvm_blocking_get_port       -     @1016
-      exp_port             uvm_blocking_get_port       -     @1007
-  v_sqr                    virtual_sequencer           -     @481 
-    rsp_export             uvm_analysis_export         -     @489 
-    seq_item_export        uvm_seq_item_pull_imp       -     @595 
-    arbitration_queue      array                       0     -    
-    lock_queue             array                       0     -    
-    num_last_reqs          integral                    32    'd1  
-    num_last_rsps          integral                    32    'd1  
+    i_agt_mdl_fifo         uvm_tlm_analysis_fifo #(T)  -     @513 
+      analysis_export      uvm_analysis_imp            -     @557 
+      get_ap               uvm_analysis_port           -     @548 
+      get_peek_export      uvm_get_peek_imp            -     @530 
+      put_ap               uvm_analysis_port           -     @539 
+      put_export           uvm_put_imp                 -     @521 
+    mdl                    my_model                    -     @497 
+      ap                   uvm_analysis_port           -     @853 
+      port                 uvm_blocking_get_port       -     @844 
+    mdl_scb_fifo           uvm_tlm_analysis_fifo #(T)  -     @566 
+      analysis_export      uvm_analysis_imp            -     @610 
+      get_ap               uvm_analysis_port           -     @601 
+      get_peek_export      uvm_get_peek_imp            -     @583 
+      put_ap               uvm_analysis_port           -     @592 
+      put_export           uvm_put_imp                 -     @574 
+    o_agt                  agent_out                   -     @489 
+      mon                  monitor_out                 -     @866 
+        ap                 uvm_analysis_port           -     @875 
+    o_agt_scb_fifo         uvm_tlm_analysis_fifo #(T)  -     @619 
+      analysis_export      uvm_analysis_imp            -     @663 
+      get_ap               uvm_analysis_port           -     @654 
+      get_peek_export      uvm_get_peek_imp            -     @636 
+      put_ap               uvm_analysis_port           -     @645 
+      put_export           uvm_put_imp                 -     @627 
+    scb                    my_scoreboard               -     @505 
+      act_port             uvm_blocking_get_port       -     @893 
+      exp_port             uvm_blocking_get_port       -     @884 
 ------------------------------------------------------------------
 ```
 
